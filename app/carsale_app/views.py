@@ -53,11 +53,12 @@ def sell_car(request):
             # Retrieve the form data
             make = form.cleaned_data['make']
             model = form.cleaned_data['model']
+            year = form.cleaned_data['year']
             price = form.cleaned_data['price']
             image = form.cleaned_data['image']
 
-            # Save the data in the Car dataset
-            car = Car(make=make, model=model, price=price, image=image)
+            # Save the data in the Car model
+            car = Car(make=make, model=model, year=year, price=price, image=image)
             car.save()
 
             return redirect('catalog')  # Replace 'catalog' with the appropriate URL name for your catalog page
@@ -65,6 +66,7 @@ def sell_car(request):
         form = CarSellForm()
 
     return render(request, 'sell_car.html', {'form': form})
+
 def checkout(request):
     if request.method == 'POST':
         # Process the form data
