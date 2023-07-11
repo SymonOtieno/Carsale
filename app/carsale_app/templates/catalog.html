@@ -148,7 +148,37 @@
             <!-- Cart items will be dynamically added here using JavaScript -->
         </ul>
         <p class="cart-total">Total: $<span id="cart-total">0</span></p>
-        <a href="#" class="checkout-btn">Checkout</a>
+        <button class="checkout-btn" onclick="showPopup()">Checkout</button>
+    </div>
+
+    <!-- Billing Information Form Popup -->
+    <div id="billing-form-popup" class="popup">
+        <div class="popup-inner">
+            <h2>Billing Information</h2>
+            <form action="/checkout" method="POST">
+                {% csrf_token %}
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="payment">Payment</label>
+                <select id="payment" name="payment" required>
+                    <option value="credit">Credit Card</option>
+                    <option value="debit">Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+
+                <p class="cart-total">Total: $<span id="cart-total-popup">0</span></p>
+
+                <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+            </form>
+            <button onclick="hidePopup()">Close</button>
+        </div>
     </div>
 
     <!-- JavaScript for adding items to cart -->
@@ -181,6 +211,18 @@
                 cartTotal.textContent = total.toFixed(2);
             }
         });
+        function showPopup() {
+            const popup = document.getElementById('billing-form-popup');
+            const cartTotal = document.getElementById('cart-total').textContent;
+            const cartTotalPopup = document.getElementById('cart-total-popup');
+            cartTotalPopup.textContent = cartTotal;
+            popup.style.display = 'block';
+        }
+
+        function hidePopup() {
+            const popup = document.getElementById('billing-form-popup');
+            popup.style.display = 'none';
+        }
     </script>
 </body>
 </html>
