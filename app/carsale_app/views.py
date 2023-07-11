@@ -9,6 +9,7 @@ from .forms import CarSellForm
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
 import time
+import csv
 
 def home(request):
     return render(request, 'index.html', context={'user': request.user})
@@ -88,3 +89,17 @@ def checkout(request):
 def success(request):
     # Render the success page with the message
     return render(request, 'success.html')
+
+def download_cars(request):
+    cars = Car.objects.all()
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="cars.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Make', 'Model', 'Price'])
+
+    for car in cars:
+        writer.writerow([car.make, car.model, car.price])
+
+    return response
