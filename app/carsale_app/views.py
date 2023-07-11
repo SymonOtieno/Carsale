@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Car, Account
 from .forms import CarSellForm
 from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
+import time
 
 def home(request):
     return render(request, 'index.html', context={'user': request.user})
@@ -63,3 +65,24 @@ def sell_car(request):
         form = CarSellForm()
  
     return render(request, 'sell_car.html', {'form': form})
+def checkout(request):
+    if request.method == 'POST':
+        # Process the form data
+        # You can access the submitted form data using `request.POST` dictionary
+        # For example:
+        name = request.POST['name']
+        email = request.POST['email']
+        address = request.POST['address']
+        payment = request.POST['payment']
+
+        # Perform any necessary processing with the form data
+
+        # Redirect to the success page
+        return redirect('success')
+
+    # Handle GET request or invalid POST request
+    return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+
+def success(request):
+    # Render the success page with the message
+    return render(request, 'success.html')
