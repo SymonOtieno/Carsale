@@ -31,4 +31,4 @@ class RegistrationForm(UserCreationForm):
 class CarSellForm(forms.ModelForm):
     class Meta:
         model = Car
-        fields = ['make', 'model', 'price', 'image']
+        fields = ['make', 'model', 'year', 'price', 'image']
