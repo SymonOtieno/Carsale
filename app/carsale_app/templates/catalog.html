@@ -4,27 +4,130 @@
 <head>
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/cart.css' %}" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Car Catalog</title>
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .car-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .car-item {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .car-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .car-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .car-price {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart-btn {
+            display: inline-block;
+            background-color: #a30909;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #3367d6;
+        }
+
+        .cart-container {
+            margin-top: 40px;
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-header h2 {
+            font-size: 24px;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cart-item {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .checkout-btn {
+            display: inline-block;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <h1>Car Catalog</h1>
-        <a href="{% url 'home' %}">Home</a>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count" id="cart-count">0</span>
-        </div>
-    </header>
-
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Search cars...">
-        <button id="search-button"><i class="fas fa-search"></i></button>
-    </div>
-
+    <h1>Car Catalog</h1>
     <div class="car-container">
         {% for car in cars %}
             <div class="car-item">
@@ -37,49 +140,23 @@
             <p>No cars available.</p>
         {% endfor %}
     </div>
-
-    <div class="cart-container" id="cart-container">
+    <div class="cart-container">
         <div class="cart-header">
             <h2>Cart</h2>
-            <div class="close-cart" onclick="toggleCart()">
-                <i class="fas fa-times"></i>
-            </div>
         </div>
-        <ul class="cart-items" id="cart-items">
+        <ul class="cart-items">
             <!-- Cart items will be dynamically added here using JavaScript -->
         </ul>
         <p class="cart-total">Total: $<span id="cart-total">0</span></p>
-        <div class="billing-form">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="address">Address</label>
-            <input type="text" id="address" name="address" required>
-
-            <button type="submit" class="checkout-btn" onclick="checkout()">Checkout</button>
-        </div>
+        <a href="#" class="checkout-btn">Checkout</a>
     </div>
 
-    <!-- JavaScript for adding items to cart, managing the cart functionality, performing search, and handling checkout -->
+    <!-- JavaScript for adding items to cart -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-            const cartContainer = document.getElementById('cart-container');
-            const cartItemsContainer = document.getElementById('cart-items');
-            const cartCountElement = document.getElementById('cart-count');
+            const cartItemsContainer = document.querySelector('.cart-items');
             const cartTotal = document.getElementById('cart-total');
-            const searchInput = document.getElementById('search-input');
-            const searchButton = document.getElementById('search-button');
-            const carItems = document.querySelectorAll('.car-item');
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const addressInput = document.getElementById('address');
-            const checkoutButton = document.querySelector('.checkout-btn');
-
-            const cartItems = {}; // Object to store the cart items
 
             addToCartButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -87,80 +164,23 @@
                     const carName = button.previousElementSibling.previousElementSibling.textContent;
                     const carPrice = button.previousElementSibling.textContent.slice(1);
                     const cartItem = document.createElement('li');
+                    cartItem.classList.add('cart-item');
                     cartItem.textContent = `${carName} - $${carPrice}`;
                     cartItemsContainer.appendChild(cartItem);
-
-                    // Add the item to the cart object
-                    cartItems[carId] = {
-                        name: carName,
-                        price: parseFloat(carPrice),
-                    };
-
                     updateCartTotal();
-                    updateCartCount();
                 });
             });
 
             function updateCartTotal() {
-                const prices = Object.values(cartItems).map(item => item.price);
-                const total = prices.reduce((acc, curr) => acc + curr, 0);
+                const cartItems = document.querySelectorAll('.cart-items li');
+                let total = 0;
+                cartItems.forEach(item => {
+                    const price = parseFloat(item.textContent.slice(item.textContent.lastIndexOf('$') + 1));
+                    total += price;
+                });
                 cartTotal.textContent = total.toFixed(2);
             }
-
-            function updateCartCount() {
-                const count = Object.keys(cartItems).length;
-                cartCountElement.textContent = count;
-            }
-
-            function toggleCart() {
-                cartContainer.classList.toggle('open');
-            }
-
-            function performSearch() {
-                const searchTerm = searchInput.value.trim().toLowerCase();
-
-                carItems.forEach(carItem => {
-                    const carName = carItem.querySelector('h2').textContent.toLowerCase();
-
-                    if (carName.includes(searchTerm)) {
-                        carItem.style.display = 'block';
-                    } else {
-                        carItem.style.display = 'none';
-                    }
-                });
-            }
-
-            function checkout() {
-                const name = nameInput.value.trim();
-                const email = emailInput.value.trim();
-                const address = addressInput.value.trim();
-
-                // Perform further actions with the collected billing information
-
-                // Clear the cart items and update the UI
-                cartItemsContainer.innerHTML = '';
-                cartItems = {};
-                updateCartTotal();
-                updateCartCount();
-
-                // Clear the billing information inputs
-                nameInput.value = '';
-                emailInput.value = '';
-                addressInput.value = '';
-
-                // Close the cart container
-                toggleCart();
-            }
-
-            searchButton.addEventListener('click', performSearch);
-            searchInput.addEventListener('keyup', performSearch);
-            checkoutButton.addEventListener('click', checkout);
         });
-
-        function toggleCart() {
-            const cartContainer = document.getElementById('cart-container');
-            cartContainer.classList.toggle('open');
-        }
     </script>
 </body>
 </html>
