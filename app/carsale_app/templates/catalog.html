@@ -186,6 +186,9 @@
 </head>
 <body>
     <h1>Car Catalog</h1>
+    <div style="text-align: center;">
+        <a href="/home">Home</a>
+      </div>      
     <div class="car-container">
         {% for car in cars %}
             <div class="car-item">
@@ -206,7 +209,7 @@
             <!-- Cart items will be dynamically added here using JavaScript -->
         </ul>
         <p class="cart-total">Total: $<span id="cart-total">0</span></p>
-        <button class="checkout-btn" onclick="showPopup()">Checkout</button>
+        <button class="checkout-btn" onclick="showPopup()" {% if cart_total == 0 %}disabled{% endif %}>Checkout</button>
     </div>
 
     <!-- Billing Information Form Popup -->
@@ -240,7 +243,7 @@
 
             <p class="cart-total">Total: $<span id="cart-total-popup">0</span></p>
 
-            <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+            <button class="checkout-btn" onclick="showPopup()" disabled>Checkout</button>
         </form>
         <button onclick="hidePopup()">Close</button>
     </div>
@@ -251,7 +254,7 @@
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
         const cartItemsContainer = document.querySelector('.cart-items');
         const cartTotal = document.getElementById('cart-total');
-        const cartItemsList = document.getElementById('cart-items-list');
+        const checkoutButton = document.querySelector('.checkout-btn');
 
         addToCartButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -274,27 +277,18 @@
                 total += price;
             });
             cartTotal.textContent = total.toFixed(2);
+
+            toggleCheckoutButton();
         }
 
-        const billingForm = document.getElementById('billing-form');
-        billingForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const cartItems = document.querySelectorAll('.cart-items li');
-            const cartItemsInput = document.createElement('input');
-            cartItemsInput.type = 'hidden';
-            cartItemsInput.name = 'cart_items';
-            cartItemsInput.value = Array.from(cartItems).map(item => item.textContent.trim()).join(',');
-            billingForm.appendChild(cartItemsInput);
-
-            // Handle form submission and show success page
-            // Clear the cart items and update the UI
-            cartItemsContainer.innerHTML = '';
-            updateCartTotal();
-
-            // Show success page
-            window.location.href = 'success.html';
-        });
+        function toggleCheckoutButton() {
+            const cartTotalValue = parseFloat(cartTotal.textContent);
+            if (cartTotalValue === 0) {
+                checkoutButton.setAttribute('disabled', 'disabled');
+            } else {
+                checkoutButton.removeAttribute('disabled');
+            }
+        }
     });
 
     function showPopup() {

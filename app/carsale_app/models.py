@@ -40,3 +40,14 @@ class Car(models.Model):
 
     def __str__(self):
         return f"{self.make} {self.model} ({self.year})"
+    
+class BillingInfo(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    address = models.CharField(max_length=200)
+    payment = models.CharField(max_length=50)
+    car_name = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
