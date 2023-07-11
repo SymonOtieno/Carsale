@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Template Stylesheet -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/cart.css' %}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Car Catalog</title>
+</head>
+<body>
+    <header class="header">
+        <h1>Car Catalog</h1>
+        <a href="{% url 'home' %}">Home</a>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search cars...">
+        <button id="search-button"><i class="fas fa-search"></i></button>
+    </div>
+
+    <div class="car-container">
+        {% for car in cars %}
+            <div class="car-item">
+                <img src="{% static 'images/' %}{{ car.image }}" alt="{{ car.make }} {{ car.model }}" class="car-image">
+                <h2>{{ car.make }} {{ car.model }}</h2>
+                <p class="car-price">${{ car.price }}</p>
+                <button class="add-to-cart-btn" data-car-id="{{ car.id }}">Add to Cart</button>
+            </div>
+        {% empty %}
+            <p>No cars available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="cart-container" id="cart-container">
+        <div class="cart-header">
+            <h2>Cart</h2>
+            <div class="close-cart" onclick="toggleCart()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <ul class="cart-items" id="cart-items">
+            <!-- Cart items will be dynamically added here using JavaScript -->
+        </ul>
+        <p class="cart-total">Total: $<span id="cart-total">0</span></p>
+        <a href="#" class="checkout-btn">Checkout</a>
+    </div>
+
+    <!-- JavaScript for adding items to cart, managing the cart functionality, and performing search -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            const cartContainer = document.getElementById('cart-container');
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCountElement = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button');
+            const carItems = document.querySelectorAll('.car-item');
+
+            const cartItems = {}; // Object to store the cart items
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const carId = button.getAttribute('data-car-id');
+                    const carName = button.previousElementSibling.previousElementSibling.textContent;
+                    const carPrice = button.previousElementSibling.textContent.slice(1);
+                    const cartItem = document.createElement('li');
+                    cartItem.textContent = `${carName} - $${carPrice}`;
+                    cartItemsContainer.appendChild(cartItem);
+
+                    // Add the item to the cart object
+                    cartItems[carId] = {
+                        name: carName,
+                        price: parseFloat(carPrice),
+                    };
+
+                    updateCartTotal();
+                    updateCartCount();
+                });
+            });
+
+            function updateCartTotal() {
+                const prices = Object.values(cartItems).map(item => item.price);
+                const total = prices.reduce((acc, curr) => acc + curr, 0);
+                cartTotal.textContent = total.toFixed(2);
+            }
+
+            function updateCartCount() {
+                const count = Object.keys(cartItems).length;
+                cartCountElement.textContent = count;
+            }
+
+            function toggleCart() {
+                cartContainer.classList.toggle('open');
+            }
+
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+
+                carItems.forEach(carItem => {
+                    const carName = carItem.querySelector('h2').textContent.toLowerCase();
+
+                    if (carName.includes(searchTerm)) {
+                        carItem.style.display = 'block';
+                    } else {
+                        carItem.style.display = 'none';
+                    }
+                });
+            }
+
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keyup', performSearch);
+        });
+    </script>
+</body>
+</html>

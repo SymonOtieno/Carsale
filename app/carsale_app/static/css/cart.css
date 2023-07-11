@@ -1,0 +1,156 @@
+/* Additional CSS styles for the catalog page */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f1f1f1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.cart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+.cart-icon i {
+    font-size: 20px;
+}
+
+.cart-count {
+    background-color: #ff5555;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+.car-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px;
+    padding: 100px 20px 20px;
+}
+
+.car-item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.car-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.car-price {
+    margin: 0;
+    color: #ff5555;
+    font-weight: bold;
+}
+
+.add-to-cart-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 10px;
+    background-color: #ff5555;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cart-container {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f1f1f1;
+}
+
+.cart-header h2 {
+    margin: 0;
+}
+
+.close-cart {
+    cursor: pointer;
+}
+
+.close-cart i {
+    color: #999;
+    font-size: 18px;
+}
+
+.cart-items {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.cart-items li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-items li:last-child {
+    border-bottom: none;
+}
+
+.cart-total {
+    padding: 10px 20px;
+    margin: 0;
+    background-color: #f1f1f1;
+    font-weight: bold;
+    text-align: right;
+}
+
+.checkout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 20px;
+    background-color: #ff5555;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
