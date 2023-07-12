@@ -243,7 +243,7 @@
 
             <p class="cart-total">Total: $<span id="cart-total-popup">0</span></p>
 
-            <button class="checkout-btn" onclick="showPopup()" disabled>Checkout</button>
+            <button type="submit" class="checkout-btn">Proceed to Checkout</button>
         </form>
         <button onclick="hidePopup()">Close</button>
     </div>
@@ -254,7 +254,7 @@
         const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
         const cartItemsContainer = document.querySelector('.cart-items');
         const cartTotal = document.getElementById('cart-total');
-        const checkoutButton = document.querySelector('.checkout-btn');
+        const cartItemsList = document.getElementById('cart-items-list');
 
         addToCartButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -281,14 +281,25 @@
             toggleCheckoutButton();
         }
 
-        function toggleCheckoutButton() {
-            const cartTotalValue = parseFloat(cartTotal.textContent);
-            if (cartTotalValue === 0) {
-                checkoutButton.setAttribute('disabled', 'disabled');
-            } else {
-                checkoutButton.removeAttribute('disabled');
-            }
-        }
+        const billingForm = document.getElementById('billing-form');
+        billingForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const cartItems = document.querySelectorAll('.cart-items li');
+            const cartItemsInput = document.createElement('input');
+            cartItemsInput.type = 'hidden';
+            cartItemsInput.name = 'cart_items';
+            cartItemsInput.value = Array.from(cartItems).map(item => item.textContent.trim()).join(',');
+            billingForm.appendChild(cartItemsInput);
+
+            // Handle form submission and show success page
+            // Clear the cart items and update the UI
+            cartItemsContainer.innerHTML = '';
+            updateCartTotal();
+
+            // Show success page
+            window.location.href = 'success.html';
+        });
     });
 
     function showPopup() {
@@ -305,6 +316,18 @@
         popup.classList.remove('show');
         popup.classList.add('hidden');
     }
+    function toggleCheckoutButton() {
+        const checkoutButton = document.querySelector('.checkout-btn');
+        const cartTotalValue = parseFloat(cartTotal.textContent);
+        if (cartTotalValue === 0) {
+            checkoutButton.setAttribute('disabled', 'disabled');
+        } else {
+            checkoutButton.removeAttribute('disabled');
+        }
+    }
+
+    // Call the toggleCheckoutButton function on page load
+    toggleCheckoutButton();
     </script>
 </body>
 </html>
