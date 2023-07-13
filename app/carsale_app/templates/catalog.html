@@ -181,6 +181,41 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #a30909;
+            color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .cart-icon i {
+            font-size: 20px;
+        }
+
+        #cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            color: #a30909;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
     </style>
 </head>
@@ -188,7 +223,12 @@
     <h1>Car Catalog</h1>
     <div style="text-align: center;">
         <a href="/home">Home</a>
-      </div>      
+      </div> 
+      <!-- Cart Icon -->
+    <div class="cart-icon" onclick="showPopup()">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-counter">0</span>
+    </div>     
     <div class="car-container">
         {% for car in cars %}
             <div class="car-item">
@@ -251,57 +291,79 @@
     <!-- JavaScript for adding items to cart -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-        const cartItemsContainer = document.querySelector('.cart-items');
-        const cartTotal = document.getElementById('cart-total');
-        const cartItemsList = document.getElementById('cart-items-list');
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    const cartItemsContainer = document.querySelector('.cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const cartCounter = document.getElementById('cart-counter');
 
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const carId = button.getAttribute('data-car-id');
-                const carName = button.previousElementSibling.previousElementSibling.textContent;
-                const carPrice = button.previousElementSibling.textContent.slice(1);
-                const cartItem = document.createElement('li');
-                cartItem.classList.add('cart-item');
-                cartItem.textContent = `${carName} - $${carPrice}`;
-                cartItemsContainer.appendChild(cartItem);
-                updateCartTotal();
-            });
-        });
-
-        function updateCartTotal() {
-            const cartItems = document.querySelectorAll('.cart-items li');
-            let total = 0;
-            cartItems.forEach(item => {
-                const price = parseFloat(item.textContent.slice(item.textContent.lastIndexOf('$') + 1));
-                total += price;
-            });
-            cartTotal.textContent = total.toFixed(2);
-
-            toggleCheckoutButton();
-        }
-
-        const billingForm = document.getElementById('billing-form');
-        billingForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const cartItems = document.querySelectorAll('.cart-items li');
-            const cartItemsInput = document.createElement('input');
-            cartItemsInput.type = 'hidden';
-            cartItemsInput.name = 'cart_items';
-            cartItemsInput.value = Array.from(cartItems).map(item => item.textContent.trim()).join(',');
-            billingForm.appendChild(cartItemsInput);
-
-            // Handle form submission and show success page
-            // Clear the cart items and update the UI
-            cartItemsContainer.innerHTML = '';
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const carId = button.getAttribute('data-car-id');
+            const carName = button.previousElementSibling.previousElementSibling.textContent;
+            const carPrice = button.previousElementSibling.textContent.slice(1);
+            const cartItem = document.createElement('li');
+            cartItem.classList.add('cart-item');
+            cartItem.textContent = `${carName} - $${carPrice}`;
+            cartItemsContainer.appendChild(cartItem);
             updateCartTotal();
-
-            // Show success page
-            window.location.href = 'success.html';
+            updateCartCounter();
         });
     });
 
+    function updateCartTotal() {
+        const cartItems = document.querySelectorAll('.cart-items li');
+        let total = 0;
+        cartItems.forEach(item => {
+            const price = parseFloat(item.textContent.slice(item.textContent.lastIndexOf('$') + 1));
+            total += price;
+        });
+        cartTotal.textContent = total.toFixed(2);
+
+        toggleCheckoutButton();
+    }
+
+    function updateCartCounter() {
+        const cartItems = document.querySelectorAll('.cart-items li');
+        cartCounter.textContent = cartItems.length;
+    }
+
+    const billingForm = document.getElementById('billing-form');
+    billingForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const cartItems = document.querySelectorAll('.cart-items li');
+        const cartItemsInput = document.createElement('input');
+        cartItemsInput.type = 'hidden';
+        cartItemsInput.name = 'cart_items';
+        cartItemsInput.value = Array.from(cartItems).map(item => item.textContent.trim()).join(',');
+        billingForm.appendChild(cartItemsInput);
+
+        // Handle form submission and show success page
+        // Clear the cart items and update the UI
+        cartItemsContainer.innerHTML = '';
+        updateCartTotal();
+        updateCartCounter();
+
+        // Show success page
+        window.location.href = 'success.html';
+    });
+
+    function toggleCheckoutButton() {
+        const checkoutButton = document.querySelector('.checkout-btn');
+        const cartTotalValue = parseFloat(cartTotal.textContent);
+        if (cartTotalValue === 0) {
+            checkoutButton.setAttribute('disabled', 'disabled');
+        } else {
+            checkoutButton.removeAttribute('disabled');
+        }
+    }
+
+    
+
+    // Call the toggleCheckoutButton and updateCartCounter functions on page load
+    toggleCheckoutButton();
+    updateCartCounter();
+});
     function showPopup() {
         const popup = document.getElementById('billing-form-popup');
         const cartTotal = document.getElementById('cart-total').textContent;
@@ -316,18 +378,15 @@
         popup.classList.remove('show');
         popup.classList.add('hidden');
     }
-    function toggleCheckoutButton() {
-        const checkoutButton = document.querySelector('.checkout-btn');
-        const cartTotalValue = parseFloat(cartTotal.textContent);
-        if (cartTotalValue === 0) {
-            checkoutButton.setAttribute('disabled', 'disabled');
-        } else {
-            checkoutButton.removeAttribute('disabled');
-        }
-    }
 
-    // Call the toggleCheckoutButton function on page load
-    toggleCheckoutButton();
+    function toggleCart() {
+        const cartContainer = document.querySelector('.cart-container');
+        cartContainer.classList.toggle('show');
+    }
+    
+    
+
+
     </script>
 </body>
 </html>
